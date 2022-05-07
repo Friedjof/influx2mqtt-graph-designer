@@ -1,5 +1,7 @@
+#!/usr/bin/env python3
 # Friedjof Noweck
 # 2022-05-06
+
 import sys
 import logging
 import configparser
