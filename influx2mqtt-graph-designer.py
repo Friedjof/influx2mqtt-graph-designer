@@ -183,7 +183,7 @@ class GraphDesigner:
 
         for nr, d in enumerate(data):
             self.logger.debug(d, extra=self.logging_inf)
-            result[f'{nr}'] = d[1]
+            result[f'{nr}'] = int(d[1])
 
         return result
 
