@@ -1,0 +1,18 @@
+[influx]
+host=host
+port=8086
+username=username
+password=password
+database=iot-server
+measurement=HuehnerEier
+query=InfluxQL Query
+
+[mqtt]
+host=host
+port=1883
+username=username
+password=password
+userid=GraphDesigner
+
+trigger=trigger topic
+post=post topic
