@@ -108,7 +108,10 @@ class API:
     def sub_loop(self) -> None:
         self.connect()
 
-        self.api.loop_forever()
+        try:
+            self.api.loop_forever()
+        except KeyboardInterrupt:
+            self.logger.info(">> End <<", extra=self.logging_inf)
 
     def __del__(self):
         self.api.disconnect()
@@ -140,8 +143,6 @@ class GraphDesigner:
 
     def make(self) -> dict:
         self.logger.info("Trigger via API", extra=self.logging_inf)
-        today: date = date.today()
-        with_today: bool = False
 
         data: dict = self.model.get_data()
         data: list = data["series"][0]["values"]
