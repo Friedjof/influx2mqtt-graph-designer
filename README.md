@@ -3,6 +3,7 @@
 influx2mqtt graph designer is a small deamon written in Python
 to prepare InfluxDB data for the MQTT mobile client [IoTMQTTPanel](https://play.google.com/store/apps/details?id=snr.lab.iotmqttpanel.prod)
 
+
 # Requirements
 * python3.8 or newer
 * paho-mqtt ~= 1.6.1
@@ -86,6 +87,10 @@ docker run --name=influxdb -d -p 8086:8086 influxdb
 ```
 docker run --link influxdb -d -v $PWD/influx2mqtt-graph-designer.ini:/app/influx2mqtt-graph-designer.ini --name influx2mqtt-graph-designer influx2mqtt-graph-designer
 ```
+
+# Statistics
+![Statistics](MQTT_Statistics.png)
+Mobile MQTT client [IoTMQTTPanel](https://play.google.com/store/apps/details?id=snr.lab.iotmqttpanel.prod)
 
 # License
 >You can check out the full license [here](LICENSE.txt)
