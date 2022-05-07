@@ -164,7 +164,7 @@ if __name__ == "__main__":
     l.addHandler(handler)
 
     config: configparser.ConfigParser = configparser.ConfigParser()
-    config.read('graph_maker.ini')
+    config.read('influx2mqtt-graph-designer.ini')
 
     m: Model = Model(configuration=config["influx"], logger=l)
     a: API = API(configuration=config["mqtt"], logger=l)

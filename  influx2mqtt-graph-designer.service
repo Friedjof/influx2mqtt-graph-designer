@@ -1,0 +1,21 @@
+
+[Unit]
+Description=Influx to MQTT Graph Designer
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=nobody
+Group=nogroup
+WorkingDirectory=/opt/ influx2mqtt-graph-designer
+ExecStart=/opt/ influx2mqtt-graph-designer/.venv/bin/python /opt/ influx2mqtt-graph-designer/ influx2mqtt-graph-designer.py -d
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=influx2mqtt-graph-designer
+RemainAfterExit=no
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
