@@ -1,0 +1,50 @@
+import "experimental/table"
+
+from(bucket: "iobroker")
+  |> range(start: -1d)
+  |> filter(fn: (r) => r._measurement == "d" and r._field == "eier")
+  |> sum(column: "_value")
+  |> yield(name: "d0")
+
+from(bucket: "iobroker")
+  |> range(start: -2d, stop: -1d)
+  |> filter(fn: (r) => r._measurement == "d" and r._field == "eier")
+  |> sum(column: "_value")
+  |> table.fill()
+  |> yield(name: "d1")
+
+from(bucket: "iobroker")
+  |> range(start: -3d, stop: -2d)
+  |> filter(fn: (r) => r._measurement == "d" and r._field == "eier")
+  |> sum(column: "_value")
+  |> yield(name: "d2")
+
+from(bucket: "iobroker")
+  |> range(start: -4d, stop: -3d)
+  |> filter(fn: (r) => r._measurement == "d" and r._field == "eier")
+  |> sum(column: "_value")
+  |> yield(name: "d3")
+
+from(bucket: "iobroker")
+  |> range(start: -5d, stop: -4d)
+  |> filter(fn: (r) => r._measurement == "d" and r._field == "eier")
+  |> sum(column: "_value")
+  |> yield(name: "d4")
+
+from(bucket: "iobroker")
+  |> range(start: -6d, stop: -5d)
+  |> filter(fn: (r) => r._measurement == "d" and r._field == "eier")
+  |> sum(column: "_value")
+  |> yield(name: "d5")
+
+from(bucket: "iobroker")
+  |> range(start: -7d, stop: -6d)
+  |> filter(fn: (r) => r._measurement == "d" and r._field == "eier")
+  |> sum(column: "_value")
+  |> yield(name: "d6")
+
+from(bucket: "iobroker")
+  |> range(start: -8d, stop: -7d)
+  |> filter(fn: (r) => r._measurement == "d" and r._field == "eier")
+  |> sum(column: "_value")
+  |> yield(name: "d7")

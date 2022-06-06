@@ -5,10 +5,10 @@
 import sys
 import logging
 import configparser
-from datetime import datetime, date
 
 from paho.mqtt import client as mqtt_client
-from influxdb import InfluxDBClient
+from influxdb_client import InfluxDBClient, QueryApi
+from influxdb_client.client.query_api import FluxTable, FluxRecord
 
 
 # InfluxDB Connector Class
@@ -29,34 +29,44 @@ class Model:
         self.logging_inf: dict = logging_inf
         self.logger: logging.Logger = logger
 
-        self.database: InfluxDBClient = InfluxDBClient()
+        self.database: InfluxDBClient = None
+        self.api: QueryApi = None
 
     # Connect Model to InfluxDB
     def connect(self):
         self.database: InfluxDBClient = InfluxDBClient(
-            host=self.configuration["host"],
-            port=self.configuration.getint("port"),
-            username=self.configuration["username"],
-            password=self.configuration["password"],
-            database=self.configuration["database"],
-            ssl=False
+            url=self.configuration["url"],
+            token=self.configuration["token"],
+            org=self.configuration["organisation"],
+            bucket=self.configuration["bucket"]
         )
-        self.database.switch_database(self.configuration["database"])
+
+        self.api: QueryApi = self.database.query_api()
 
         if self.is_connected():
             self.logger.info(f"Model is connected", extra=self.logging_inf)
+            self.api: QueryApi = self.database.query_api()
         else:
             self.logger.warning("Model is not connected", extra=self.logging_inf)
 
     # True if Model is connected to the InfluxDB
     def is_connected(self) -> bool:
-        return len(self.database.get_list_database()) > 0
+        return self.database.ping()
+
+    # Read Influxql query from file
+    def get_query(self) -> list[FluxTable]:
+        with open(self.configuration["query"], "r") as query_file:
+            query: str = query_file.read()
+
+        return self.api.query(query)
 
     # Exec InfluxQL Query
-    def get_data(self) -> dict:
-        return self.database.query(
-            self.configuration["query"].format(measurement=self.configuration["measurement"])
-        ).raw
+    def get_data(self) -> iter:
+        tables: list[FluxTable] = self.get_query()
+        for table in tables:
+            record: FluxRecord
+            for record in table.records:
+                yield int(record.get_value())
 
     # Disconnect from InfluxDB
     def __del__(self):
@@ -176,14 +186,13 @@ class GraphDesigner:
     def make(self) -> dict:
         self.logger.info("Trigger via API", extra=self.logging_inf)
 
-        data: dict = self.model.get_data()
-        data: list = data["series"][0]["values"]
+        data: tuple = tuple(self.model.get_data())
 
         result: dict = {}
 
         for nr, d in enumerate(data):
             self.logger.debug(d, extra=self.logging_inf)
-            result[f'{nr}'] = int(d[1])
+            result[f'{nr}'] = d
 
         return result
 
