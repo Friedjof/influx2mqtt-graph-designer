@@ -7,7 +7,9 @@ to prepare InfluxDB data for the MQTT mobile client [IoTMQTTPanel](https://play.
 # Requirements
 * python3.8 or newer
 * paho-mqtt ~= 1.6.1
-* influxdb ~= 5.3.1
+* InfluxDB Client:
+   * InfluxDB 1.X => influxdb ~= 5.3.1
+   * InfluxDB 2.X => influxdb_client ~= 1.29.1
 
 # Setup
 * here we assume we install in ```/opt```
