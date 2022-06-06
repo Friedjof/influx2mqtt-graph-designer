@@ -1,0 +1,6 @@
+import "contrib/bonitoo-io/tickscript"
+
+from(bucket: "bucket")
+  |> range(start: -7d)
+  |> filter(fn: (r) => r._measurement == "measurement" and r._field == "field")
+  |> truncateTimeColumn(unit: 12h)

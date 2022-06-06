@@ -1,11 +1,9 @@
 [influx]
-host=host
-port=8086
-username=username
-password=password
-database=iot-server
-measurement=HuehnerEier
-query=InfluxQL Query
+url=https://example.com
+token=tokentokentokentokentokentokentokentokentokentokentokentokentokentokentokentokentoken
+organisation=organisation
+bucket=bucket
+query=query.influxql
 
 [mqtt]
 host=host
