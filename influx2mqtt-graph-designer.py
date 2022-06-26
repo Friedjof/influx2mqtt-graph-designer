@@ -45,7 +45,6 @@ class Model:
 
         if self.is_connected():
             self.logger.info(f"Model is connected", extra=self.logging_inf)
-            self.api: QueryApi = self.database.query_api()
         else:
             self.logger.warning("Model is not connected", extra=self.logging_inf)
 
@@ -54,19 +53,32 @@ class Model:
         return self.database.ping()
 
     # Read Influxql query from file
-    def get_query(self) -> list[FluxTable]:
+    def get_query(self) -> str:
         with open(self.configuration["query"], "r") as query_file:
             query: str = query_file.read()
 
-        return self.api.query(query)
+        return query
 
     # Exec InfluxQL Query
     def get_data(self) -> iter:
-        tables: list[FluxTable] = self.get_query()
-        for table in tables:
-            record: FluxRecord
-            for record in table.records:
-                yield int(record.get_value())
+        query: str = self.get_query()
+
+        for start, stop in (
+                ('-1d', '0d'), ('-2d', '-1d'), ('-3d', '-2d'),
+                ('-4d', '-3d'), ('-5d', '-4d'), ('-6d', '-5d'), ('-7d', '-6d')
+        ):
+            q = query.format(start=start, stop=stop)
+
+            tables: list[FluxTable] = self.api.query(q)
+
+            if len(tables) > 0:
+                for table in tables:
+                    record: FluxRecord
+                    for record in table.records:
+
+                        yield int(record.get_value())
+            else:
+                yield 0
 
     # Disconnect from InfluxDB
     def __del__(self):
@@ -98,12 +110,12 @@ class API:
 
     # On Connection
     def __on_connect(self, client, userdata, flags, rc) -> None:
-
         if rc == 0:
             self.logger.info("API is connected", extra=self.logging_inf)
-        else:
-            self.logger.warning("API is not connected", extra=self.logging_inf)
+            self.api.subscribe(topic=self.configuration["trigger"])
+            return
 
+        self.logger.warning("API is not connected", extra=self.logging_inf)
         self.api.subscribe(topic=self.configuration["trigger"])
 
     # On Message
